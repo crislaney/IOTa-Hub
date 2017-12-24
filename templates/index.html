@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <script src="{{url_for('static', filename='angular.min.js')}}"></script>
+    </head>
+    <body>
+	{% raw %}
+	<div ng-controller="MyController">
+	    Hello {{greetMe}}!
+	</div>
+	<script src="http://code.angularjs.org/snapshot/angular.js"></script>
+
+	<script>
+	    angular.module('myApp', [])
+		.controller('MyController', ['$scope', function ($scope) {
+		    $scope.greetMe = 'World';
+		    }]);
+
+		angular.element(function() {
+		    angular.bootstrap(document, ['myApp']);
+		    });
+	</script>
+	{% endraw %}
+    </body>
+</html>
