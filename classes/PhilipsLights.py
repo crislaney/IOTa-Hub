@@ -15,7 +15,7 @@ class PhilipsLights(IOTObject):
             print("Press button... You have 5 seconds...")
             time.sleep(5)
 
-        self.bridge = Bridge('192.168.0.147', None, config_file_path)
+        self.bridge = Bridge('192.168.0.105', None, config_file_path)
         self.lights = self.bridge.get_light_objects()
 
     def turn_on(self):
@@ -32,7 +32,7 @@ class PhilipsLights(IOTObject):
     def set_step(self, step):
         self.run_step(step)
 
-        
+
     def all_off(self):
         for light in self.lights:
             self.bridge.set_light(light.light_id, 'on', False)
@@ -73,7 +73,6 @@ class PhilipsLights(IOTObject):
     def run_script(self, script):
         i = 0
         for step in script:
-            print(step[4]['hue'])
             self.run_step(step)
         return
         # Debug stuff

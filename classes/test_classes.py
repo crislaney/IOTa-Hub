@@ -1,15 +1,14 @@
 
 from LiveUpdater import LiveUpdater
-from LiveUpdater import interpret_script
 from PhilipsLights import PhilipsLights
 import time
 
 
 def main():
     print("Starting test program")
-    '''
     updater = LiveUpdater()
 
+    '''
     updater.all_off()
     updater.set_red()
     step1 = updater.create_step(5, [4])
@@ -36,6 +35,6 @@ def main():
     script.append({4:{'hue':0, 'sat':254, 'bri':254, 'transitiontime':100}})
     script.append({4:{'hue':40000, 'sat':254, 'bri':254, 'transitiontime':5}})
 
-    interpret_script(script, 0, -1, -1, -1)
+    updater.run_script(script)
 
 main()
