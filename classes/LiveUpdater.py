@@ -40,6 +40,7 @@ class LiveUpdater():
 
     def interpret_script(self, script, step_num, start_loop, end_loop, cond):
         while step_num < len(script):
+            print("Step: ", step_num)
             if 'start_loop' in script[step_num]:
                 if step_num != start_loop:
                     step_num = self.interpret_script(script, step_num, \
