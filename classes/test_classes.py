@@ -7,7 +7,7 @@ import time
 def main():
     print("Starting test program")
     updater = LiveUpdater()
-
+    updater.all_on()
     '''
     updater.all_off()
     updater.set_red()
@@ -28,13 +28,13 @@ def main():
     script = []
     script.append({'start_loop':3})
     script.append({4:{'hue':0, 'sat':254, 'bri':254, 'transitiontime':50}})
-    script.append({4:{'hue':20000, 'sat':254, 'bri':254, 'transitiontime':5}})
+    script.append({4:{'hue':20000, 'sat':254, 'bri':254, 'transitiontime':50}})
     script.append({'start_loop':3})
-    script.append({4:{'hue':20000, 'sat':254, 'bri':127, 'transitiontime':50}})
-    script.append({4:{'hue':20000, 'sat':254, 'bri':254, 'transitiontime':5}})
+    script.append({4:{'hue':20000, 'sat':254, 'bri':50, 'transitiontime':10}})
+    script.append({4:{'hue':20000, 'sat':254, 'bri':254, 'transitiontime':10}})
     script.append({'end_loop':0})
-    script.append({4:{'hue':0, 'sat':254, 'bri':254, 'transitiontime':50}})
-    script.append({4:{'hue':35000, 'sat':254, 'bri':254, 'transitiontime':5}})
+    script.append({4:{'hue':0, 'sat':254, 'bri':254, 'transitiontime':35}})
+    script.append({4:{'hue':35000, 'sat':254, 'bri':254, 'transitiontime':30}})
     script.append({'end_loop':0})
 
     updater.run_script(script)

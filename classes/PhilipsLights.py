@@ -66,9 +66,14 @@ class PhilipsLights(IOTObject):
     # step is a dictionary of the form
     # {'hue':int, 'sat':int, 'bri':lint, 'transitiontime':int}
     def run_step(self, step):
+        # take the bigger value between 1/10 (max request per second) and
+        # the longest transitiontime in the step
+        max_trans_time = max(1/10, step[max(step.keys(), \
+        key=lambda k: step[k]['transitiontime'])]['transitiontime']/10)
+
         for key, value in step.items():
             self.bridge.set_light(key, value, transitiontime=step[key]['transitiontime'] )
-            time.sleep(step[key]['transitiontime']/10)
+        time.sleep(max_trans_time)
 
     def run_script(self, script):
         i = 0
