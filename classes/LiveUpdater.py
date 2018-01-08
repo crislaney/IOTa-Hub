@@ -1,5 +1,4 @@
 import sys
-from phue import Bridge
 import time
 import os.path
 import random
@@ -11,7 +10,6 @@ class LiveUpdater():
 
 
     def load_script(self):
-
         return
 
 

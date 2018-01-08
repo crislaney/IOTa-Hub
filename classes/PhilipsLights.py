@@ -15,8 +15,10 @@ class PhilipsLights(IOTObject):
             print("Press button... You have 5 seconds...")
             time.sleep(5)
 
+        self.lights = []
         self.bridge = Bridge('192.168.1.33', None, config_file_path)
         self.lights = self.bridge.get_light_objects()
+        print(self.lights)
 
     def turn_on(self):
         self.all_on()
