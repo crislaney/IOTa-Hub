@@ -18,17 +18,20 @@ class PhilipsLights(IOTObject):
         self.lights = []
         self.bridge = Bridge('192.168.1.33', None, config_file_path)
         self.lights = self.bridge.get_light_objects()
-        print(self.lights)
+
 
     def turn_on(self):
         self.all_on()
 
+
     def turn_off(self):
         self.all_of()
+
 
     # returns a dict
     def get_step(self):
         return self.create_step()
+
 
     # takes a dict
     def set_step(self, step):
@@ -39,9 +42,11 @@ class PhilipsLights(IOTObject):
         for light in self.lights:
             self.bridge.set_light(light.light_id, 'on', False)
 
+
     def all_on(self):
         for light in self.lights:
             self.bridge.set_light(light.light_id, 'on', True)
+
 
     def create_step(self, step_time=0, lights=None):
         lights_in_step = {}
@@ -82,7 +87,14 @@ class PhilipsLights(IOTObject):
         for step in script:
             self.run_step(step)
         return
-        # Debug stuff
+
+
+    # Debug stuff
+
+
+    def output_light_info(self):
+        for light in self.lights:
+            print("name: {} ID: {}".format(light.name, light.light_id))
 
     def DEFCON(self):
         self.set_red()
@@ -95,17 +107,16 @@ class PhilipsLights(IOTObject):
                     self.bridge.set_light(light.light_id, 'bri', value=50, transitiontime=10)
                     time.sleep(1)
 
+
     def set_red(self):
         for light in self.lights:
-            light.brightness = 254
-            light.saturation = 254
-            light.hue = 0
+            self.bridge.set_light(light.light_id, 'hue', value=0, transitiontime=0)
+
 
     def set_blue(self):
         for light in self.lights:
-            light.brightness = 254
-            light.saturation = 254
-            light.hue = 46920
+            self.bridge.set_light(light.light_id, 'hue', value=46920, transitiontime=0)
+
 
     def party_mode(self):
         self.set_red()
@@ -114,6 +125,7 @@ class PhilipsLights(IOTObject):
                 #self.bridge.set_light(light.light_id, 'bri', value=random.randrange(50, 254), transitiontime=0)
                 self.bridge.set_light(light.light_id, 'hue', value=random.randrange(0, 60000), transitiontime=0)
                 time.sleep(.01)
+
 
     def print_values(self):
         return self.lights[0]
