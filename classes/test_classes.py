@@ -8,21 +8,7 @@ def main():
     print("Starting test program")
     updater = LiveUpdater()
     updater.all_on()
-    '''
-    updater.all_off()
-    updater.set_red()
-    step1 = updater.create_step(5, [4])
-    time.sleep(1)
-    updater.set_blue()
-    step2 = updater.create_step(5, [4])
-    time.sleep(1)
-    step1 = {1:{'hue':0, 'sat':254, 'bri':254, 'transitiontime':5}}
-    step2 = {1:{'hue':0, 'sat':254, 'bri':254, 'transitiontime':5}}
-    updater.run_step(step1)
-    time.sleep(1)
-    updater.run_step(step2)
-    time.sleep(1)
-    '''
+
 
     print("DEBUGGING")
     script = []
