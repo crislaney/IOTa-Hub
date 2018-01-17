@@ -110,12 +110,18 @@ class PhilipsLights(IOTObject):
 
     def set_red(self):
         for light in self.lights:
-            self.bridge.set_light(light.light_id, 'hue', value=0, transitiontime=0)
+            self.bridge.set_light(light.light_id, 'hue', value=0, \
+            transitiontime=0)
+            self.bridge.set_light(light.light_id, 'bri', value=254, \
+            transitiontime=0)
 
 
     def set_blue(self):
         for light in self.lights:
-            self.bridge.set_light(light.light_id, 'hue', value=46920, transitiontime=0)
+            self.bridge.set_light(light.light_id, 'hue', value=46920, \
+            transitiontime=0)
+            self.bridge.set_light(light.light_id, 'bri', value=254, \
+            transitiontime=0)
 
 
     def party_mode(self):
