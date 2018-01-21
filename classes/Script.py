@@ -1,3 +1,4 @@
+import json
 
 class Script():
     def __init__(self):
@@ -34,4 +35,15 @@ class Script():
     @name.setter
     def name(self, value):
         # check db for existing name
-        self.name = value
+        self._name = value
+
+
+    def json_format(self):
+        json_string = "{\"name\":\"" + self._name + "\", \"steps\":" + json.dumps(self._steps) \
+        + "}"
+        return json_string
+
+
+    def load_from_json(self, json_string):
+        self.name = json.loads(json_string)["name"]
+        self.steps = json.loads(json_string)["steps"]
