@@ -7,6 +7,16 @@ from PhilipsLights import PhilipsLights
 class LiveUpdater():
     def __init__(self):
         self.phil_lights = PhilipsLights()
+        self._stop_script = False
+
+
+    @property
+    def stop_script(self):
+        return self._stop_script
+
+    @stop_script.setter
+    def stop_script(self, value):
+        self._stop_script = value
 
 
     def load_script(self):
@@ -36,13 +46,23 @@ class LiveUpdater():
         self.interpret_script(script, 0, -1, -1, -1)
 
 
+    # need to figure out a way to break infinite loop
     def interpret_script(self, script, step_num, start_loop, end_loop, cond):
+        if cond == 'inf':
+            cond = float('inf')
         while step_num < len(script):
             print("Step: ", step_num)
-            if 'start_loop' in script[step_num]:
+            if self._stop_script == True:
+                return 0
+
+            elif 'start_loop' in script[step_num]:
                 if step_num != start_loop:
+                    if script[step_num]['start_loop'] == 'inf':
+                        script[step_num]['start_loop'] == float('inf')
+
                     step_num = self.interpret_script(script, step_num, \
                     step_num, -1, script[step_num]['start_loop']) + 1
+
                 elif cond < 0:
                     print(cond)
                     # this should probs be an error case???
