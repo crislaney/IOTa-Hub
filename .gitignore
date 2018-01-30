@@ -22,3 +22,5 @@ htmlcov
 *,cover
 
 .db_info
+
+envs/*
