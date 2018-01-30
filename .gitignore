@@ -20,3 +20,5 @@ htmlcov
 .coverage
 .coverage.*
 *,cover
+
+.db_info

@@ -4,6 +4,11 @@ from phue import Bridge
 import time
 import os.path
 import random
+import rgbxy
+from rgbxy import Converter
+from rgbxy import get_light_gamut
+
+
 
 class PhilipsLights(IOTObject):
     def __init__(self):
@@ -18,6 +23,7 @@ class PhilipsLights(IOTObject):
         self.lights = []
         self.bridge = Bridge('192.168.1.33', None, config_file_path)
         self.lights = self.bridge.get_light_objects()
+        self.converter = Converter()
 
 
     def turn_on(self):
@@ -64,7 +70,7 @@ class PhilipsLights(IOTObject):
                 if light.transitiontime is None:
                     light.transitiontime = 0
                 lights_in_step[light.light_id] = \
-                {'hue':light.hue, 'sat':light.saturation, \
+                {'xy':light.xy, 'sat':light.saturation, \
                 'bri':light.brightness, 'transitiontime':step_time}
 
         return lights_in_step
@@ -79,22 +85,36 @@ class PhilipsLights(IOTObject):
         key=lambda k: step[k]['transitiontime'])]['transitiontime']/10)
 
         for key, value in step.items():
-            self.bridge.set_light(key, value, transitiontime=step[key]['transitiontime'] )
+            if "rgb" in value:
+                new_value = value
+                model = self.bridge.get_light(key, parameter="modelid")
+                converter = Converter(get_light_gamut(model))
+                new_value['xy'] = converter.rgb_to_xy(value['rgb'][0], \
+                value['rgb'][1], value['rgb'][2])
+                new_value.pop('rgb', None)
+                self.bridge.set_light(key, new_value, transitiontime=step[key]['transitiontime'] )
+
+            else:
+                print("rgb not in step")
+                self.bridge.set_light(key, value, transitiontime=step[key]['transitiontime'] )
+
+
         time.sleep(max_trans_time)
+
 
     def run_script(self, script):
         i = 0
-        for step in script:
+        print("Converting")
+        for step in converted_dict:
             self.run_step(step)
         return
 
 
     # Debug stuff
-
-
     def output_light_info(self):
         for light in self.lights:
-            print("name: {} ID: {}".format(light.name, light.light_id))
+            print("name: {} \nID: {} \nType: {}\n\n".format(light.name, \
+            light.light_id, light.modelid))
 
     def DEFCON(self):
         self.set_red()
