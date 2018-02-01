@@ -1,3 +1,3 @@
 #!/bin/bash
-source ./venv/bin/activate
+source ./envs/iota_venv/bin/activate
 cd ./classes/
