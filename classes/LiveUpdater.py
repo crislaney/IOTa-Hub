@@ -79,5 +79,6 @@ class LiveUpdater():
                 self.run_step(script[step_num])
                 step_num += 1
 
+                
     def get_phil_lights(self):
         return self.phil_lights

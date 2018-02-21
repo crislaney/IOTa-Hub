@@ -73,7 +73,6 @@ def main():
     temp.start()
     '''
     updater.run_script(my_script_obj.steps)
-    temp.join()
 
     '''
     while(1):

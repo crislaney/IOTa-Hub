@@ -1,25 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp">
+<html lang="en" ng-app="TestApp">
     <head>
         <script src="{{url_for('static', filename='angular.min.js')}}"></script>
+        <script src="{{url_for('static', filename='main.js')}}"></script>
     </head>
-    <body>
+    <body ng-controller='TestappController'>
 	{% raw %}
-	<div ng-controller="MyController">
-	    Hello {{greetMe}}!
-	</div>
-	<script src="http://code.angularjs.org/snapshot/angular.js"></script>
 
-	<script>
-	    angular.module('myApp', [])
-		.controller('MyController', ['$scope', function ($scope) {
-		    $scope.greetMe = 'World';
-		    }]);
+  <form role="form" ng-submit="getResults()">
+    <input type="button" ng-click="getResults()" value="Get Results"/>
+  </form>
 
-		angular.element(function() {
-		    angular.bootstrap(document, ['myApp']);
-		    });
-	</script>
+
+
 	{% endraw %}
     </body>
 </html>

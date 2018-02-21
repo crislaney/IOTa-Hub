@@ -1,7 +1,7 @@
 from flask import Flask, send_file, render_template
 import sys
 sys.path.insert(0, './classes')
-import PhillipsLight
+import LiveUpdater
 
 app = Flask(__name__)
 
