@@ -1,0 +1,15 @@
+<div layout="row">
+    <div>
+      <span>Test Light Name:</span> {{light1.name}}
+    </div>
+    <div layout="column">
+    <mat-slider class="one" layout-align="start" (change)="colorChange(colorSlide.value)"
+    #colorSlide min="0" max="65535" step="1" value="0"></mat-slider>
+
+    <mat-slider (change)="briChange(briSlide.value)"
+    #briSlide min="0" max="254" step="1" value="0"></mat-slider>
+
+    <mat-slider (change)="satChange(satSlide.value)"
+    #satSlide min="0" max="254" step="1" value="0"></mat-slider>
+  </div>
+</div>
