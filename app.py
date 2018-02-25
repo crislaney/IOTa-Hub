@@ -1,13 +1,15 @@
-from flask import Flask, send_file, render_template
+
+from flask import Flask, request, send_from_directory
 import sys
 sys.path.insert(0, './classes')
 import LiveUpdater
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_url_path='')
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return send_from_directory('static/iota-frontend/src/', 'index.html')
 
 if __name__=='__main__':
     app.run(debug=True)
