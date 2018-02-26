@@ -1,15 +1,26 @@
-<div layout="row">
-    <div>
-      <span>Test Light Name:</span> {{light1.name}}
+<div fxLayout="row">
+    <div fxLayout="column">
+        <mat-list>
+            <mat-list-item>
+                <span>Test Light Name:</span> {{light1.name}}
+            </mat-list-item>
+
+            <mat-list-item>
+                <mat-slider (input)="colorChange(colorSlide.value)" #colorSlide min="0" max="4294967295" step="1" value="0"></mat-slider>
+            </mat-list-item>
+
+            <mat-list-item>
+                <mat-slider (input)="briChange(briSlide.value)" #briSlide min="0" max="254" step="1" value="0"></mat-slider>
+            </mat-list-item>
+            <mat-list-item>
+
+                <mat-slider (input)="satChange(satSlide.value)" #satSlide min="0" max="254" step="1" value="0"></mat-slider>
+            </mat-list-item>
+        </mat-list>
     </div>
-    <div layout="column">
-    <mat-slider class="one" layout-align="start" (change)="colorChange(colorSlide.value)"
-    #colorSlide min="0" max="65535" step="1" value="0"></mat-slider>
-
-    <mat-slider (change)="briChange(briSlide.value)"
-    #briSlide min="0" max="254" step="1" value="0"></mat-slider>
-
-    <mat-slider (change)="satChange(satSlide.value)"
-    #satSlide min="0" max="254" step="1" value="0"></mat-slider>
-  </div>
+    <div fxLayout="column" class="temp" fxFlex="60">
+        <div></div>
+        <div fxFlex="60" class="temp">Temp</div>
+        <div></div>
+    </div>
 </div>

@@ -9,9 +9,14 @@ export class LightsComponent implements OnInit {
 
 
   colorChange(val: number) {
-    console.log("Slider changed!");
-    console.log(val)
-  };
+    var val_hex_string: string = val.toString(16);
+    console.log(val.toString(16));
+    var red: string = val_hex_string.substring(0,2);
+    var green: string = val_hex_string.substring(2, 4);
+    var blue: string = val_hex_string.substring(4, 7);
+
+    
+  }
 
   briChange(val: number) {
     console.log("Slider changed!");
