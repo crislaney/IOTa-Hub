@@ -1,6 +1,9 @@
-type Tuple = [number, number];
+type Tuple = [number, number, number];
 export class Light {
-  id: number;
+  constructor(public l_name: string, public l_rgb: Tuple){
+    this.name = l_name;
+    this.rgb = l_rgb;
+  }
   name: string;
-  xy: Tuple;
+  rgb: Tuple;
 }

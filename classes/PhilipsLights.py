@@ -7,6 +7,8 @@ import random
 import rgbxy
 from rgbxy import Converter
 from rgbxy import get_light_gamut
+import http.client
+import json
 
 
 
@@ -16,12 +18,24 @@ class PhilipsLights(IOTObject):
         # need to do a check here to see if already connected
         config_file_path = "./.python_hue"
         need_to_connect = False
+        self.ip = None
+        try:
+            ip_json = http.client.HTTPSConnection('www.meethue.com', timeout=10)
+            ip_json.request('GET', '/api/nupnp')
+            ip_dict = json.loads(ip_json.getresponse().read())
+            ip_dict[0]['internalipaddress']
+        except Exception as e:
+            print("Error occured Please restart setup")
+            print(e)
+            exit(1)
+
         if not os.path.isfile(config_file_path):
             print("Press button... You have 5 seconds...")
             time.sleep(5)
 
+
         self.lights = []
-        self.bridge = Bridge('192.168.1.33', None, config_file_path)
+        self.bridge = Bridge(self.ip, None, config_file_path)
         self.lights = self.bridge.get_light_objects()
         self.converter = Converter()
 

@@ -1,15 +1,31 @@
-div {
-    background-color: #00FFFF;
+.lightName {
+    text-align: "left";
+}
+
+mat-slide {
+    text-align: "left";
+    padding-left: "0";
 }
 
 mat-list-item {
+    text-align: "left";
+    padding-left: "0";
+}
+
+
+/*
+mat-list-item {
     background-color: yellow;
 }
+*/
 
 .temp {
     background-color: orange;
 }
 
+
+/*
 .container {
     background-color: blue;
 }
+*/

@@ -1,26 +1,26 @@
+<h1>Live Updater</h1>
 <div fxLayout="row">
-    <div fxLayout="column">
-        <mat-list>
-            <mat-list-item>
-                <span>Test Light Name:</span> {{light1.name}}
-            </mat-list-item>
-
-            <mat-list-item>
-                <mat-slider (input)="colorChange(colorSlide.value)" #colorSlide min="0" max="4294967295" step="1" value="0"></mat-slider>
-            </mat-list-item>
-
-            <mat-list-item>
-                <mat-slider (input)="briChange(briSlide.value)" #briSlide min="0" max="254" step="1" value="0"></mat-slider>
-            </mat-list-item>
-            <mat-list-item>
-
-                <mat-slider (input)="satChange(satSlide.value)" #satSlide min="0" max="254" step="1" value="0"></mat-slider>
-            </mat-list-item>
-        </mat-list>
-    </div>
-    <div fxLayout="column" class="temp" fxFlex="60">
-        <div></div>
-        <div fxFlex="60" class="temp">Temp</div>
-        <div></div>
+    <div fxLayout="column" *ngFor="let light of lights">
+        <div fxLayout="column">
+            <div fxLayoutAlign="left">Test Light Name:</div>
+            <div fxLayoutAlign="left">{{light.name}}</div>
+        </div>
+        <div class="tableContainer">
+            <div fxLayout="row">
+                <mat-list>
+                    <!-- *ngFor="let light of lights">*/-->
+                    <mat-list-item>
+                        <mat-slider (input)="colorChange('red', redSlide.value)" #redSlide min="0" max="255" step="1" value={{light.rgb[0]}}></mat-slider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <mat-slider (input)="colorChange('green', greenSlide.value)" #greenSlide min="0" max="255" step="1" value={{light.rgb[1]}}></mat-slider>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <mat-slider (input)="colorChange('blue', blueSlide.value)" #blueSlide min="0" max="255" step="1" value={{light.rgb[2]}}></mat-slider>
+                    </mat-list-item>
+                </mat-list>
+                <mat-slider vertical [value]="0" [min]="0" [max]="254" [step]="1"></mat-slider>
+            </div>
+        </div>
     </div>
 </div>
