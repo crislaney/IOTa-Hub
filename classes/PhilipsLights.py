@@ -1,5 +1,6 @@
-from IOTObject import IOTObject
 import sys
+sys.path.append("..")
+from .IOTObject import IOTObject
 from phue import Bridge
 import time
 import os.path
@@ -16,7 +17,8 @@ class PhilipsLights(IOTObject):
     def __init__(self):
         #press button
         # need to do a check here to see if already connected
-        config_file_path = "./.python_hue"
+        config_file_path = "../../../classes/.python_hue"
+        print(os.getcwd())
         need_to_connect = False
         self.ip = None
         try:
@@ -83,11 +85,28 @@ class PhilipsLights(IOTObject):
             for light in all_lights:
                 if light.transitiontime is None:
                     light.transitiontime = 0
-                lights_in_step[light.light_id] = \
+                model_id = self.bridge.get_light(light.light_id, parameter="modelid")
+
+
+                gamut = get_light_gamut(model_id)
+                converter = Converter(gamut) #issue here. idk what
+                rgb_hex = converter.xy_to_hex(light.xy[0], light.xy[1], light.brightness)
+                lights_in_step[light.name] = \
                 {'xy':light.xy, 'sat':light.saturation, \
-                'bri':light.brightness, 'transitiontime':step_time}
+                'bri':light.brightness, 'transitiontime':step_time, \
+                'on':light.on, 'rgb_hex':rgb_hex}
 
         return lights_in_step
+
+
+    def _convert_dict_to_xy(self, key, value):
+        new_value = value
+        model = self.bridge.get_light(key, parameter="modelid")
+        converter = Converter(get_light_gamut(model))
+        new_value['xy'] = converter.rgb_to_xy(value['rgb'][0], \
+        value['rgb'][1], value['rgb'][2])
+        new_value.pop('rgb', None)
+        return new_value
 
 
     # step is a dictionary of the form
@@ -100,13 +119,8 @@ class PhilipsLights(IOTObject):
 
         for key, value in step.items():
             if "rgb" in value:
-                new_value = value
-                model = self.bridge.get_light(key, parameter="modelid")
-                converter = Converter(get_light_gamut(model))
-                new_value['xy'] = converter.rgb_to_xy(value['rgb'][0], \
-                value['rgb'][1], value['rgb'][2])
-                new_value.pop('rgb', None)
-                self.bridge.set_light(key, new_value, transitiontime=step[key]['transitiontime'] )
+                self.bridge.set_light(key, _convert_dict_to_xy(key, value), \
+                transitiontime=step[key]['transitiontime'] )
 
             else:
                 print("rgb not in step")

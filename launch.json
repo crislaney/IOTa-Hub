@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+	{
+	    "name": "Flask (linux/osx)",
+	    "type": "python",
+	    "request": "launch",
+	    "stopOnEntry": false,
+	    "pythonPath": "${env.HOME}/Projects/IOTa-Hub/envs/iota_venv/bin/python3",
+	    "program": "${env.HOME}/Projects/IOTa-Hub/envs/iota_venv/flask",
+	    "env": {
+		"FLASK_APP": "${env.HOME}/Projects/IOTa-Hub/app.py"
+	    },
+	    "args": [
+		"run",
+		"--no-debugger",
+		"--no-reload"
+	    ],
+	    "debugOptions": [
+		"WaitOnAbnormalExit",
+		"WaitOnNormalExit",
+		"RedirectOutput"
+	    ]
+	}
+    ]
+}

@@ -2,7 +2,8 @@ import sys
 import time
 import os.path
 import random
-from PhilipsLights import PhilipsLights
+sys.path.append("..")
+from .PhilipsLights import PhilipsLights
 
 class LiveUpdater():
     def __init__(self):
