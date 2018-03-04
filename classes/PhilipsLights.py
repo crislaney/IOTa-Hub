@@ -12,15 +12,19 @@ import http.client
 import json
 
 
-
 class PhilipsLights(IOTObject):
     def __init__(self):
         #press button
         # need to do a check here to see if already connected
-        config_file_path = "../../../classes/.python_hue"
+        debug_config_file = "../../../classes/.python_hue"
+        prod_config_file = "./.python_hue"
+
+        correct_path = debug_config_file
+
         print(os.getcwd())
         need_to_connect = False
         self.ip = None
+        
         try:
             ip_json = http.client.HTTPSConnection('www.meethue.com', timeout=10)
             ip_json.request('GET', '/api/nupnp')
@@ -31,13 +35,20 @@ class PhilipsLights(IOTObject):
             print(e)
             exit(1)
 
-        if not os.path.isfile(config_file_path):
+        if os.path.isfile(debug_config_file):
+            print("Checking debug")
+            correct_path = debug_config_file
+
+        elif os.path.isfile(prod_config_file):
+            print("Checking prod")
+            correct_path = prod_config_file
+
+        else:
             print("Press button... You have 5 seconds...")
             time.sleep(5)
 
-
         self.lights = []
-        self.bridge = Bridge(self.ip, None, config_file_path)
+        self.bridge = Bridge(self.ip, None, correct_path)
         self.lights = self.bridge.get_light_objects()
         self.converter = Converter()
 
