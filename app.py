@@ -19,8 +19,16 @@ def get_lights():
     temp = json.dumps(updater.create_step())
     return temp
 
-@app.route("/light", methods=['PUT'])
-def update_light():
+@app.route("/light/<name>", methods=['PUT'])
+def update_light(name):
+    # updater.run_script(request.)
+    resp_dict = json.loads(request.data)
+    
+    new_dict = {}
+    new_dict[name] = resp_dict
+    print(new_dict)
+    updater.run_step(new_dict)
+
 
     return 'success', 200
 

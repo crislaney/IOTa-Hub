@@ -3,7 +3,7 @@ sys.path.append("..")
 from .IOTObject import IOTObject
 from phue import Bridge
 import time
-import os.path
+import os
 import random
 import rgbxy
 from rgbxy import Converter
@@ -16,12 +16,14 @@ class PhilipsLights(IOTObject):
     def __init__(self):
         #press button
         # need to do a check here to see if already connected
-        debug_config_file = "../../../classes/.python_hue"
+        debug_config_file = "/home/cris/Projects/IOTa-Hub/classes/.python_hue"
         prod_config_file = "./.python_hue"
 
         correct_path = debug_config_file
+        current_dir = os.getcwd()
+        print("Current path " + current_dir)
+        print(correct_path)
 
-        print(os.getcwd())
         need_to_connect = False
         self.ip = None
         
@@ -125,13 +127,18 @@ class PhilipsLights(IOTObject):
     def run_step(self, step):
         # take the bigger value between 1/10 (max request per second) and
         # the longest transitiontime in the step
-        max_trans_time = max(1/10, step[max(step.keys(), \
-        key=lambda k: step[k]['transitiontime'])]['transitiontime']/10)
+
+        max_trans_time = max(1/10, step[max(step.keys(), key=lambda k:step[k]['transitiontime'])]['transitiontime']/10)
 
         for key, value in step.items():
+            if 'is_on' in value:
+                step[key]['on'] = step[key]['is_on']
+                step[key].pop('is_on')
+
             if "rgb" in value:
-                self.bridge.set_light(key, _convert_dict_to_xy(key, value), \
-                transitiontime=step[key]['transitiontime'] )
+                new_dict = self._convert_dict_to_xy(key, value)
+                self.bridge.set_light(key, new_dict, value, \
+                transitiontime=step[key]['transitiontime'])
 
             else:
                 print("rgb not in step")
