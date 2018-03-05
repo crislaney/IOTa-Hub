@@ -127,7 +127,7 @@ class PhilipsLights(IOTObject):
     def run_step(self, step):
         # take the bigger value between 1/10 (max request per second) and
         # the longest transitiontime in the step
-
+        print(step)
         max_trans_time = max(1/10, step[max(step.keys(), key=lambda k:step[k]['transitiontime'])]['transitiontime']/10)
 
         for key, value in step.items():

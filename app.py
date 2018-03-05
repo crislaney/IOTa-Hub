@@ -20,15 +20,20 @@ def get_lights():
     return temp
 
 @app.route("/light/<name>", methods=['PUT'])
+@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
 def update_light(name):
-    # updater.run_script(request.)
-    resp_dict = json.loads(request.data)
-    
     new_dict = {}
-    new_dict[name] = resp_dict
-    print(new_dict)
-    updater.run_step(new_dict)
 
+    try:
+        new_dict[name] = json.loads(request.data)
+    except Exception as e:
+        return 'malformed json', 400
+    
+    try:
+        updater.run_step(new_dict)
+    except Exception as e:
+        print("EXCEPTION: " + e)
+        return 'error updating light', 400
 
     return 'success', 200
 
@@ -36,6 +41,7 @@ def update_light(name):
 def setup():
     return
 
+@app.route("/step", methods=['POST'])
 
 
 if __name__=='__main__':
