@@ -2,6 +2,7 @@
 from LiveUpdater import LiveUpdater
 from PhilipsLights import PhilipsLights
 from Script import Script
+from DB_Manager import DB_Manager
 import random
 import time
 import threading
@@ -35,6 +36,8 @@ def long_script():
     'transitiontime':30}})
     script.append({'end_loop':0})
 
+    return Script(script, "DB Test Script 1")
+
 def stop_inf(updater):
     print("stopper thread sleeping")
     time.sleep(10)
@@ -43,49 +46,8 @@ def stop_inf(updater):
 
 
 def main():
-    print("Starting test program")
-    global updater
-    updater = LiveUpdater()
-
-    # updater.all_on()
-
-    # updater.get_phil_lights().output_light_info()
-    # updater.get_phil_lights().set_blue()
-
-    # time.sleep(3)
-
-    print("DEBUGGING")
-    script = []
-    script.append({'start_loop':3})
-    script.append({ \
-    "Cris Bedroom 1":{'rgb':(0, 255, 0), 'sat':254, 'bri':50, 'transitiontime':10}, \
-    "Cris Bedroom 2":{'rgb':(0, 255, 0), 'sat':254, 'bri':254, 'transitiontime':10} \
-    })
-    script.append({ \
-    "Cris Bedroom 1":{'rgb':(0, 255, 0), 'sat':254, 'bri':254, 'transitiontime':10}, \
-    "Cris Bedroom 2":{'rgb':(0, 255, 0), 'sat':254, 'bri':50, 'transitiontime':10} \
-    })
-    script.append({'end_loop':0})
-
-    my_script_obj = Script(script, "Test_Script")
-    '''
-    temp = threading.Thread(target=stop_inf, args=(updater, ))
-    temp.start()
-    '''
-    updater.run_script(my_script_obj.steps)
-
-    '''
-    while(1):
-        rand_val1 = random.randrange(0, 46920)
-        rand_val2 = random.randrange(0, 46920)
-        print(rand_val1)
-        print(rand_val2)
-        updater.run_step({"Cris Bedroom 1":{'hue':rand_val1, \
-        'sat':254, 'bri':254, 'transitiontime':300}, "Cris Bedroom 2":{'hue': \
-        rand_val2, 'sat':254, 'bri':254, 'transitiontime':300}})
-        time.sleep(30)
-    '''
-
-    updater.run_script(temp.steps)
-
+    db = DB_Manager()
+    db.Insert_User("Cristoph", "pass")
+    db.Get_User("Katie")
+    # print(db.Get_All_Scripts("Katie"))
 main()

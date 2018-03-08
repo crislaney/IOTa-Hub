@@ -42,7 +42,12 @@ def setup():
     return
 
 @app.route("/step", methods=['POST'])
+def build_step():
 
+    return
+@app.route("/script", methods=['POST'])
+def start_script():
+    return
 
 if __name__=='__main__':
     app.run(debug=True)
