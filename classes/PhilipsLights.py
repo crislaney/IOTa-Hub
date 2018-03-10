@@ -1,7 +1,7 @@
 import sys
-#sys.path.append("..")
-#from .IOTObject import IOTObject
-from IOTObject import IOTObject
+sys.path.append("..")
+from .IOTObject import IOTObject
+#from IOTObject import IOTObject
 from phue import Bridge
 import time
 import os

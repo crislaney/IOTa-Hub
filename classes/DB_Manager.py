@@ -69,6 +69,7 @@ class DB_Manager():
         # print(self.conn.Error)
 
 
+    #TODO
     def Delete_User(self, user_name):
         delete_stmt = "DELETE FROM 'Users' WHERE user_name = ?;"
         # (user_name)
@@ -95,6 +96,7 @@ class DB_Manager():
         self.conn.commit()
 
 
+    #TODO
     def Delete_Script(self, script, id=None):
         delete_stmt = "DELETE FROM 'Scripts' WHERE script_name = ?;"
         return
@@ -110,11 +112,30 @@ class DB_Manager():
 
         return curs.fetchall()
     
+    def Authorize_User(self, user_name, password):
+        hashed_pass = ""
+        user_id = -1
 
+        try:
+            user = self.Get_User(user_name)
+            user_id = user[0]
+            hashed_pass = user[2]
+        except Exception as e:
+            return None
+
+        hashed_attempt = hashlib.sha3_512(password.encode('utf-8')).hexdigest()
+
+        if hashed_pass != hashed_attempt:
+            return None
+
+        return user_id
+
+    #TODO
     def Get_Script(self, script_name, id=None):
         return
 
     
+    #TODO
     def Get_Auth_Rooms(self, user_name):
         return
     
