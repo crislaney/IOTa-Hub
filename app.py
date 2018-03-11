@@ -65,19 +65,36 @@ def update_light(name):
 
     return 'success', 200
 
-@app.route("/api/setup")
-def setup():
+@app.route("/api/script/", methods=['GET', 'POST'])
+@jwt_required()
+def record_step():
+    # updater.create_step()
     return
 
-@app.route("/api/step", methods=['POST'])
+@app.route("/api/script/<id>/step/<step_num>", methods=['POST'])
+@jwt_required()
 def record_step():
-    updater.create_step()
+    # updater.create_step()
+    return
 
-#@app.route("/api/auth", methods=['POST'])
-#def authorize_user():
-    # username
-    # password
-    # return jwt
+@app.route("/api/script/<id>", methods=['POST'])
+@jwt_required()
+def record_step():
+    # updater.create_step()
+    return
+
+@app.route("/api/account", methods=['POST'])
+def create_account():
+    try:
+        req_data = json.loads(request.data)
+        db_manager.Insert_User(req_data['username'], req_data['password'])
+    except Exception as e:
+        print(e)
+        return 'failure', 400
+
+    return 'success', 201
+
+
 
 if __name__=='__main__':
     app.run(debug=True)

@@ -64,8 +64,10 @@ class DB_Manager():
         insert_stmt = "INSERT INTO 'Users' (user_name, hash_pass) \
         VALUES(?, ?);"
         curs = self.conn.cursor()
+        print("Inserting User")
         curs.execute(insert_stmt, (user_name, hashlib.sha3_512(password.encode('utf-8')).hexdigest()))
         self.conn.commit()
+        print("Committed User")
         # print(self.conn.Error)
 
 
