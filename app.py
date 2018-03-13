@@ -1,8 +1,8 @@
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, Response
 import sys
 import json
-from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt import timedelta, JWT, jwt_required, current_identity
 from werkzeug.security import safe_str_cmp
 from flask_cors import CORS, cross_origin
 from flask_httpauth import HTTPBasicAuth
@@ -19,19 +19,22 @@ class User(object):
 
 app = Flask(__name__, static_url_path='')
 auth = HTTPBasicAuth()
-CORS(app, support_credentials=True)
+# cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 updater = LiveUpdater()
 db_manager = DB_Manager()
 app.config['SECRET_KEY'] = 'development_key_here'
+app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
+app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_HEADERS'] = 'Authorization'
+cors = CORS(app, headers=["Content-Type", "Authorization"], resources=r"/*")
+
 
 def authenticate(user_name, password):
-    print("Authenticating")
     user = db_manager.Authorize_User(user_name, password)
     if user is not None:
         return User(user)
 
 def identity(payload):
-    print("identifying")
     user_id = payload['identity']
     return {"user_id":user_id}
 
@@ -43,13 +46,13 @@ def index():
     return send_from_directory('static/', 'index.html')
 
 @app.route("/api/lights")
-@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
+@cross_origin()
 def get_lights():
     temp = json.dumps(updater.create_step())
     return temp
 
 @app.route("/api/light/<name>", methods=['PUT'])
-@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
+@cross_origin()
 def update_light(name):
     new_dict = {}
     try:
@@ -65,23 +68,97 @@ def update_light(name):
 
     return 'success', 200
 
-@app.route("/api/script/", methods=['GET', 'POST'])
-@jwt_required()
-def record_step():
-    # updater.create_step()
-    return
+'''
+@app.route("/api/step/", methods=['GET'])
+@cross_origin(origin='localhost',headers=['Allow-Cross-Origin', 'Content-Type','Authorization'])
+# @jwt_required()
+def current_step():
+    m_head = Headers()
+    m_head.add('Content-type', 'application/json')
+    m_head.add('Access-Control-Allow-Origin', '*')
+    m_status = "OK"
+    m_status_code = 200
 
-@app.route("/api/script/<id>/step/<step_num>", methods=['POST'])
-@jwt_required()
-def record_step():
-    # updater.create_step()
-    return
+    print("in request")
 
-@app.route("/api/script/<id>", methods=['POST'])
+    resp = Response(status=m_status, status_code=m_status_code, headers=m_head)
+    
+    if request.method == 'GET':
+        print("in get")
+        # Get current step from live updater
+        resp.data = response = {}
+        response['step'] = updater.create_step()
+
+        return resp
+    
+    return resp
+'''
+
+@app.route("/api/step", methods=['GET', 'PUT'])
+@cross_origin(allow_headers=['Content-Type', 'Authorization'])
 @jwt_required()
-def record_step():
-    # updater.create_step()
-    return
+def current_step2():
+    if request.method == 'GET':
+        step = updater.create_step()
+        resp = Response(json.dumps(updater.create_step()), mimetype='application\json')
+        resp.status_code = 200
+        return resp
+
+    if request.method == 'PUT':
+        data_converted = json.loads(request.data)
+        script = []
+        if type(data_converted) is list:
+            for step in data_converted:
+                script.append(json.loads(step))
+
+        else:
+            script.append(data_converted)
+
+        updater.run_script(script)
+        return 'success', 200
+
+
+
+@app.route("/api/script", methods=['POST', 'GET'])
+@cross_origin(allow_headers=['Content-Type', 'Authorization'])
+@jwt_required()
+def post_script():
+    id_num = dict(current_identity)['user_id']
+
+    if request.method == 'POST':
+        # post script to server
+        db_manager.Insert_Script(id_num, json.loads(request.data))
+        return 'success', 200
+
+    if request.method == 'GET':
+        all_scripts = db_manager.Get_All_Scripts(id_num)
+
+        script_names_and_ids = []
+        for script in all_scripts:
+            script_names_and_ids.append({'name': script['name'], 'id': script['id']})
+        return json.dumps(script_names_and_ids), 200
+    
+    return 'error', 500
+
+
+# TODO Test!
+@app.route("/api/script/<script_id>", methods=['PUT'])
+@cross_origin(allow_headers=['Content-Type', 'Authorization'])
+@jwt_required()
+def put_script(script_id):
+    # post script to server
+    if request.method == 'PUT':
+        id_num = dict(current_identity)['user_id']
+        
+        script = db_manager.Get_Script(id_num, script_id)[2]
+        processed_script = []
+        script_json = json.loads(script)
+        for step in script_json:
+            processed_script.append(json.loads(step))
+        updater.run_script(processed_script)
+        return 'success', 200
+
+    return 'failure', 500
 
 @app.route("/api/account", methods=['POST'])
 def create_account():
@@ -93,8 +170,6 @@ def create_account():
         return 'failure', 400
 
     return 'success', 201
-
-
 
 if __name__=='__main__':
     app.run(debug=True)

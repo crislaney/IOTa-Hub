@@ -88,13 +88,12 @@ class DB_Manager():
         return curs.fetchone()
 
 
-    def Insert_Script(self, user_name, script):
-        user_id = self.Get_User(user_name)[0]
+    def Insert_Script(self, user_id, script):
         #get username
         insert_stmt = "INSERT INTO 'Scripts' \
         (script_name, script_json, user_id) VALUES(?, ?, ?);"
         curs = self.conn.cursor()
-        curs.execute(insert_stmt, (script.name, json.dumps(script.steps), user_id))
+        curs.execute(insert_stmt, (script['name'], json.dumps(script['steps']), user_id))
         self.conn.commit()
 
 
@@ -104,15 +103,27 @@ class DB_Manager():
         return
 
 
-    def Get_All_Scripts(self, user_name):
-        user_id = self.Get_User(user_name)[0]
-
+    def Get_All_Scripts(self, user_id):
         query_string = "SELECT * FROM 'Scripts' WHERE Scripts.user_id=?;"
         curs = self.conn.cursor()
         curs.execute(query_string, (user_id,))
         self.conn.commit()
 
-        return curs.fetchall()
+        # 0 == script id
+        # 1 == script name
+        # 2 == script text
+        # 3 == user id
+
+        results = curs.fetchall()
+        result_dict = {}
+        result_list = []
+        for result in results:
+            result_dict['id'] = result[0]
+            result_dict['name'] = result[1]
+            result_dict['script_json'] = result[2]
+            result_list.append(result_dict)
+
+        return result_list
     
     def Authorize_User(self, user_name, password):
         hashed_pass = ""
@@ -132,9 +143,14 @@ class DB_Manager():
 
         return user_id
 
-    #TODO
-    def Get_Script(self, script_name, id=None):
-        return
+
+    def Get_Script(self, user_id, script_id):
+        query_string = "SELECT * FROM 'Scripts' WHERE Scripts.user_id=? AND Scripts.script_id=?;"
+        curs = self.conn.cursor()
+        curs.execute(query_string, (user_id, script_id))
+        self.conn.commit()
+        results = curs.fetchone()
+        return results
 
     
     #TODO
