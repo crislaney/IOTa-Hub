@@ -9,6 +9,7 @@ from flask_httpauth import HTTPBasicAuth
 
 from classes.LiveUpdater import LiveUpdater
 from classes.DB_Manager import DB_Manager
+import time
 
 
 class User(object):
@@ -31,6 +32,8 @@ cors = CORS(app, headers=["Content-Type", "Authorization"], resources=r"/*")
 
 def authenticate(user_name, password):
     user = db_manager.Authorize_User(user_name, password)
+    print(user)
+    print(password)
     if user is not None:
         return User(user)
 
@@ -48,7 +51,8 @@ def index():
 @app.route("/api/lights")
 @cross_origin()
 def get_lights():
-    temp = json.dumps(updater.create_step())
+    step = updater.create_step()
+    temp = json.dumps(step)
     return temp
 
 @app.route("/api/light/<name>", methods=['PUT'])
@@ -68,41 +72,17 @@ def update_light(name):
 
     return 'success', 200
 
-'''
-@app.route("/api/step/", methods=['GET'])
-@cross_origin(origin='localhost',headers=['Allow-Cross-Origin', 'Content-Type','Authorization'])
-# @jwt_required()
-def current_step():
-    m_head = Headers()
-    m_head.add('Content-type', 'application/json')
-    m_head.add('Access-Control-Allow-Origin', '*')
-    m_status = "OK"
-    m_status_code = 200
-
-    print("in request")
-
-    resp = Response(status=m_status, status_code=m_status_code, headers=m_head)
-    
-    if request.method == 'GET':
-        print("in get")
-        # Get current step from live updater
-        resp.data = response = {}
-        response['step'] = updater.create_step()
-
-        return resp
-    
-    return resp
-'''
 
 @app.route("/api/step", methods=['GET', 'PUT'])
 @cross_origin(allow_headers=['Content-Type', 'Authorization'])
 @jwt_required()
 def current_step2():
     if request.method == 'GET':
-        step = updater.create_step()
-        resp = Response(json.dumps(updater.create_step()), mimetype='application\json')
-        resp.status_code = 200
-        return resp
+        start = time.time()
+        resp = json.dumps(updater.create_step())
+        response_time = time.time()
+        print("Time: {}".format(response_time - start))
+        return resp, 200
 
     if request.method == 'PUT':
         data_converted = json.loads(request.data)
@@ -110,7 +90,6 @@ def current_step2():
         if type(data_converted) is list:
             for step in data_converted:
                 script.append(json.loads(step))
-
         else:
             script.append(data_converted)
 

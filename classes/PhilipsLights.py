@@ -11,6 +11,7 @@ from rgbxy import Converter
 from rgbxy import get_light_gamut
 import http.client
 import json
+import time
 
 
 class PhilipsLights(IOTObject):
@@ -93,6 +94,7 @@ class PhilipsLights(IOTObject):
             all_lights = [self.bridge.get_light_objects('id')[x] for x in lights]
             # otherwise grab all lights
         else:
+
             all_lights = self.bridge.get_light_objects()
 
             # build dict for each light in step
@@ -101,14 +103,10 @@ class PhilipsLights(IOTObject):
                     light.transitiontime = 0
                 model_id = self.bridge.get_light(light.light_id, parameter="modelid")
 
-
-                gamut = get_light_gamut(model_id)
-                converter = Converter(gamut) #issue here. idk what
-                rgb_hex = converter.xy_to_hex(light.xy[0], light.xy[1], light.brightness)
                 lights_in_step[light.name] = \
                 {'xy':light.xy, 'sat':light.saturation, \
                 'bri':light.brightness, 'transitiontime':step_time, \
-                'on':light.on, 'rgb_hex':rgb_hex}
+                'on':light.on, 'hue':light.hue}
 
         return lights_in_step
 
@@ -136,14 +134,16 @@ class PhilipsLights(IOTObject):
                 step[key]['on'] = step[key]['is_on']
                 step[key].pop('is_on')
 
-            if "rgb" in value:
-                new_dict = self._convert_dict_to_xy(key, value)
-                self.bridge.set_light(key, new_dict, value, \
-                transitiontime=step[key]['transitiontime'])
+            print(value)
+            value['hue'] = int(value['hue'])
+            value['bri'] = int(value['bri'])
+            value['sat'] = int(value['sat'])
 
-            else:
-                print("rgb not in step")
+            print(value)
+            try:
                 self.bridge.set_light(key, value, transitiontime=step[key]['transitiontime'] )
+            except Exception as e:
+                print(e)
 
 
         time.sleep(max_trans_time)
