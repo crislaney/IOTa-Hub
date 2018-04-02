@@ -23,8 +23,6 @@ class PhilipsLights(IOTObject):
 
         correct_path = debug_config_file
         current_dir = os.getcwd()
-        print("Current path " + current_dir)
-        print(correct_path)
 
         need_to_connect = False
         self.ip = None
@@ -126,20 +124,26 @@ class PhilipsLights(IOTObject):
     def run_step(self, step):
         # take the bigger value between 1/10 (max request per second) and
         # the longest transitiontime in the step
-        print(step)
-        max_trans_time = max(1/10, step[max(step.keys(), key=lambda k:step[k]['transitiontime'])]['transitiontime']/10)
+        max_trans_time = .1
+        max_step_time = step[max(step.keys(), key=lambda k:step[k]['transitiontime'])]['transitiontime']
+
+        if max_step_time > max_trans_time:
+            max_trans_time = max_step_time
+
+        print(max_trans_time)
 
         for key, value in step.items():
             if 'is_on' in value:
                 step[key]['on'] = step[key]['is_on']
                 step[key].pop('is_on')
 
-            print(value)
+            if key == "Cris Bedroom 1" or key == "Cris Bedroom 2":
+                print(value)
+            step[key].pop('xy')
             value['hue'] = int(value['hue'])
             value['bri'] = int(value['bri'])
             value['sat'] = int(value['sat'])
 
-            print(value)
             try:
                 self.bridge.set_light(key, value, transitiontime=step[key]['transitiontime'] )
             except Exception as e:
@@ -151,7 +155,6 @@ class PhilipsLights(IOTObject):
 
     def run_script(self, script):
         i = 0
-        print("Converting")
         for step in converted_dict:
             self.run_step(step)
         return

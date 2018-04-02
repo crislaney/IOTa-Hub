@@ -93,6 +93,7 @@ def current_step2():
         else:
             script.append(data_converted)
 
+        print(script)
         updater.run_script(script)
         return 'success', 200
 

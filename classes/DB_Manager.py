@@ -115,13 +115,9 @@ class DB_Manager():
         # 3 == user id
 
         results = curs.fetchall()
-        result_dict = {}
         result_list = []
         for result in results:
-            result_dict['id'] = result[0]
-            result_dict['name'] = result[1]
-            result_dict['script_json'] = result[2]
-            result_list.append(result_dict)
+            result_list.append({'id':result[0], 'name':result[1], 'script_json':result[2]})
 
         return result_list
     
