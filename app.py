@@ -78,10 +78,7 @@ def update_light(name):
 @jwt_required()
 def current_step2():
     if request.method == 'GET':
-        start = time.time()
         resp = json.dumps(updater.create_step())
-        response_time = time.time()
-        print("Time: {}".format(response_time - start))
         return resp, 200
 
     if request.method == 'PUT':
@@ -93,7 +90,6 @@ def current_step2():
         else:
             script.append(data_converted)
 
-        print(script)
         updater.run_script(script)
         return 'success', 200
 

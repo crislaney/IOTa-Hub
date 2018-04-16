@@ -125,32 +125,35 @@ class PhilipsLights(IOTObject):
         # take the bigger value between 1/10 (max request per second) and
         # the longest transitiontime in the step
         max_trans_time = .1
-        max_step_time = step[max(step.keys(), key=lambda k:step[k]['transitiontime'])]['transitiontime']
+        max_step_time = int(step[max(step.keys(), key=lambda k:step[k]['transitiontime'])]['transitiontime'])
 
         if max_step_time > max_trans_time:
             max_trans_time = max_step_time
 
-        print(max_trans_time)
-
         for key, value in step.items():
+            '''
             if 'is_on' in value:
                 step[key]['on'] = step[key]['is_on']
                 step[key].pop('is_on')
+            '''
 
             if key == "Cris Bedroom 1" or key == "Cris Bedroom 2":
                 print(value)
-            step[key].pop('xy')
+
+            if 'xy' in step[key]:
+                step[key].pop('xy')
             value['hue'] = int(value['hue'])
             value['bri'] = int(value['bri'])
             value['sat'] = int(value['sat'])
 
             try:
-                self.bridge.set_light(key, value, transitiontime=step[key]['transitiontime'] )
+                self.bridge.set_light(key, value, transitiontime=max_trans_time)
             except Exception as e:
-                print(e)
+                print("Error: " + str(e))
 
 
-        time.sleep(max_trans_time)
+        time.sleep(max_trans_time/10)
+        print("Done Sleeping")
 
 
     def run_script(self, script):
